@@ -10,7 +10,6 @@ import CoreData
 import AVKit
 
 struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @StateObject private var viewModel = APODViewModel()
     @State private var currentDate = Date.now
     @Environment(\.colorScheme) var colorScheme
@@ -55,7 +54,7 @@ struct ContentView: View {
                             .onTapGesture {
                                 calendarId += 1
                             }
-                    }
+                    }.buttonStyle(PlainButtonStyle())
                     
                     ImageContainerView(viewModel: viewModel, player: $player, imageOfTheDay: $imageOfTheDay, showFavorite: $showFavorite)
                         .onAppear {
@@ -67,6 +66,7 @@ struct ContentView: View {
                 }
             }
         }
+        .navigationViewStyle(.stack)
     }
     
     func loadData() {
@@ -153,8 +153,7 @@ struct ImageContainerView: View {
                 } else {
                     AsyncImage(url: URL(string: viewModel.apod.url)) { image in
                         image.resizable()
-                            .frame(width: 300, height: 300)
-                            .cornerRadius(15)
+                            .scaledToFill()
                             .accessibility(identifier: AccessibilityIdentifiers.image)
                             .onChange(of: image.asUIImage()) { newImage in
                                 NasaAPODDataManager.shared.addAPODData(APODModel: viewModel.apod, image: image.asUIImage())
@@ -166,8 +165,9 @@ struct ImageContainerView: View {
                     }
                      placeholder: {
                          ProgressView()
-                             .background(.clear)
-                     }.frame(width: 300, height: 300)
+                     }
+                     .frame(width: 300, height: 300)
+                    .cornerRadius(15)
                 }
             } else if viewModel.apod.mediaType == MediaType.video.rawValue, let _player = player {
                 VideoPlayer(player: _player)
@@ -184,7 +184,6 @@ struct ImageContainerView: View {
                 .accessibility(identifier: AccessibilityIdentifiers.message)
         }
         .padding([.leading, .trailing], 20)
-        .foregroundColor(colorScheme == .dark ? .black : .white)
     }
 }
 

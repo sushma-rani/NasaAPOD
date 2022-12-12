@@ -20,12 +20,17 @@ struct FavouritePicturesView: View {
     
     var body: some View {
         List {
-            ForEach(items) { item in
-                VStack(alignment: .leading) {
-                    Text(item.title ?? "")
-                        .font(.headline)
-                    Text(item.picDate ?? "")
-                        .font(.subheadline)
+            if items.isEmpty {
+                Text("No Favourite pictures yet!!")
+                    .font(.headline)
+            } else {
+                ForEach(items) { item in
+                    VStack(alignment: .leading) {
+                        Text(item.title ?? "")
+                            .font(.headline)
+                        Text(item.picDate ?? "")
+                            .font(.subheadline)
+                    }
                 }
             }
         }
